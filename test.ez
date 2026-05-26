@@ -1,0 +1,19 @@
+program p;
+var
+    int x;
+    bool z;
+    int w;
+    string s;
+    int y;
+begin
+x:=1;
+s:="string";
+y:="yet another string";
+s:=2;
+read x;
+{ read asd; }
+write x;
+write y;
+read z;
+x:=z+1+ss;
+end
