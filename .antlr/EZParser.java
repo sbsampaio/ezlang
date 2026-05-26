@@ -696,6 +696,7 @@ public class EZParser extends Parser {
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class TimesOverContext extends ExprContext {
+		public Token op;
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
 		}
@@ -708,6 +709,7 @@ public class EZParser extends Parser {
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class PlusMinusContext extends ExprContext {
+		public Token op;
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
 		}
@@ -749,6 +751,7 @@ public class EZParser extends Parser {
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class EqLtContext extends ExprContext {
+		public Token op;
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
 		}
@@ -874,9 +877,10 @@ public class EZParser extends Parser {
 						setState(112);
 						if (!(precpred(_ctx, 10))) throw new FailedPredicateException(this, "precpred(_ctx, 10)");
 						setState(113);
+						((TimesOverContext)_localctx).op = _input.LT(1);
 						_la = _input.LA(1);
 						if ( !(_la==OVER || _la==TIMES) ) {
-						_errHandler.recoverInline(this);
+							((TimesOverContext)_localctx).op = (Token)_errHandler.recoverInline(this);
 						}
 						else {
 							if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
@@ -894,9 +898,10 @@ public class EZParser extends Parser {
 						setState(115);
 						if (!(precpred(_ctx, 9))) throw new FailedPredicateException(this, "precpred(_ctx, 9)");
 						setState(116);
+						((PlusMinusContext)_localctx).op = _input.LT(1);
 						_la = _input.LA(1);
 						if ( !(_la==MINUS || _la==PLUS) ) {
-						_errHandler.recoverInline(this);
+							((PlusMinusContext)_localctx).op = (Token)_errHandler.recoverInline(this);
 						}
 						else {
 							if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
@@ -914,9 +919,10 @@ public class EZParser extends Parser {
 						setState(118);
 						if (!(precpred(_ctx, 8))) throw new FailedPredicateException(this, "precpred(_ctx, 8)");
 						setState(119);
+						((EqLtContext)_localctx).op = _input.LT(1);
 						_la = _input.LA(1);
 						if ( !(_la==EQ || _la==LT) ) {
-						_errHandler.recoverInline(this);
+							((EqLtContext)_localctx).op = (Token)_errHandler.recoverInline(this);
 						}
 						else {
 							if ( _input.LA(1)==Token.EOF ) matchedEOF = true;

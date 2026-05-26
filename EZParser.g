@@ -33,13 +33,13 @@ repeat_stmt: REPEAT stmt+ UNTIL expr;
 write_stmt: WRITE expr SEMI;
 
 expr:
-	expr (TIMES | OVER) expr	# timesOver
-	| expr (PLUS | MINUS) expr	# plusMinus
-	| expr (EQ | LT) expr		# eqLt
-	| LPAR expr RPAR			# exprPar
-	| TRUE						# exprTrue
-	| FALSE						# exprFalse
-	| INT_VAL					# exprIntVal
-	| REAL_VAL					# exprRealVal
-	| STR_VAL					# exprStrVal
-	| ID						# exprId;
+	expr op = (TIMES | OVER) expr	# timesOver
+	| expr op = (PLUS | MINUS) expr	# plusMinus
+	| expr op = (EQ | LT) expr		# eqLt
+	| LPAR expr RPAR				# exprPar
+	| TRUE							# exprTrue
+	| FALSE							# exprFalse
+	| INT_VAL						# exprIntVal
+	| REAL_VAL						# exprRealVal
+	| STR_VAL						# exprStrVal
+	| ID							# exprId;
