@@ -1,6 +1,9 @@
 package typing;
 
+import static typing.Conversion.*;
+
 import parser.EZLexer;
+import typing.Conversion.Unify;
 
 public enum EZType {
     INT_TYPE,
@@ -8,6 +11,25 @@ public enum EZType {
     BOOL_TYPE,
     STR_TYPE,
     NO_TYPE;
+
+    public String toString() {
+        switch (this) {
+            case INT_TYPE:
+                return "int";
+            case REAL_TYPE:
+                return "real";
+            case BOOL_TYPE:
+                return "bool";
+            case STR_TYPE:
+                return "string";
+            case NO_TYPE:
+                return "no_type";
+            default:
+                System.err.println("ERROR: Fall through in Type enumeration!");
+                System.exit(1);
+                return "";
+        }
+    }
 
     public static EZType getVarType(int lexerTokenType) {
         switch (lexerTokenType) {
@@ -23,50 +45,48 @@ public enum EZType {
         return null;
     }
 
-    public String toString() {
-        switch (this) {
-            case INT_TYPE:
-                return "int";
-            case REAL_TYPE:
-                return "real";
-            case BOOL_TYPE:
-                return "bool";
-            case STR_TYPE:
-                return "string";
-        }
-        return null;
-    }
-
-    private static EZType plus[][] = {
-            { INT_TYPE, REAL_TYPE, INT_TYPE, STR_TYPE },
-            { REAL_TYPE, REAL_TYPE, REAL_TYPE, STR_TYPE },
-            { INT_TYPE, REAL_TYPE, BOOL_TYPE, STR_TYPE },
-            { STR_TYPE, STR_TYPE, STR_TYPE, STR_TYPE }
+    private static Unify plus[][] = {
+            { new Unify(INT_TYPE, NONE, NONE), new Unify(REAL_TYPE, I2R, NONE), new Unify(INT_TYPE, NONE, B2I),
+                    new Unify(STR_TYPE, I2S, NONE) },
+            { new Unify(REAL_TYPE, NONE, I2R), new Unify(REAL_TYPE, NONE, NONE), new Unify(REAL_TYPE, NONE, B2R),
+                    new Unify(STR_TYPE, R2S, NONE) },
+            { new Unify(INT_TYPE, B2I, NONE), new Unify(REAL_TYPE, B2R, NONE), new Unify(BOOL_TYPE, NONE, NONE),
+                    new Unify(STR_TYPE, B2S, NONE) },
+            { new Unify(STR_TYPE, NONE, I2S), new Unify(STR_TYPE, NONE, R2S), new Unify(STR_TYPE, NONE, B2S),
+                    new Unify(STR_TYPE, NONE, NONE) },
     };
 
-    public EZType unifyPlus(EZType that) {
+    public Unify unifyPlus(EZType that) {
         return plus[this.ordinal()][that.ordinal()];
     }
 
-    private static EZType other[][] = {
-            { INT_TYPE, REAL_TYPE, NO_TYPE, NO_TYPE },
-            { REAL_TYPE, REAL_TYPE, NO_TYPE, NO_TYPE },
-            { NO_TYPE, NO_TYPE, NO_TYPE, NO_TYPE },
-            { NO_TYPE, NO_TYPE, NO_TYPE, NO_TYPE }
+    private static Unify other[][] = {
+            { new Unify(INT_TYPE, NONE, NONE), new Unify(REAL_TYPE, I2R, NONE), new Unify(NO_TYPE, NONE, NONE),
+                    new Unify(NO_TYPE, NONE, NONE) },
+            { new Unify(REAL_TYPE, NONE, I2R), new Unify(REAL_TYPE, NONE, NONE), new Unify(NO_TYPE, NONE, NONE),
+                    new Unify(NO_TYPE, NONE, NONE) },
+            { new Unify(NO_TYPE, NONE, NONE), new Unify(NO_TYPE, NONE, NONE), new Unify(NO_TYPE, NONE, NONE),
+                    new Unify(NO_TYPE, NONE, NONE) },
+            { new Unify(NO_TYPE, NONE, NONE), new Unify(NO_TYPE, NONE, NONE), new Unify(NO_TYPE, NONE, NONE),
+                    new Unify(NO_TYPE, NONE, NONE) }
     };
 
-    public EZType unifyOtherArith(EZType that) {
+    public Unify unifyOtherArith(EZType that) {
         return other[this.ordinal()][that.ordinal()];
     }
 
-    private static EZType comp[][] = {
-            { BOOL_TYPE, BOOL_TYPE, NO_TYPE, NO_TYPE },
-            { BOOL_TYPE, BOOL_TYPE, NO_TYPE, NO_TYPE },
-            { NO_TYPE, NO_TYPE, BOOL_TYPE, NO_TYPE },
-            { NO_TYPE, NO_TYPE, NO_TYPE, BOOL_TYPE }
+    private static Unify comp[][] = {
+            { new Unify(BOOL_TYPE, NONE, NONE), new Unify(BOOL_TYPE, I2R, NONE), new Unify(NO_TYPE, NONE, NONE),
+                    new Unify(NO_TYPE, NONE, NONE) },
+            { new Unify(BOOL_TYPE, NONE, I2R), new Unify(BOOL_TYPE, NONE, NONE), new Unify(NO_TYPE, NONE, NONE),
+                    new Unify(NO_TYPE, NONE, NONE) },
+            { new Unify(NO_TYPE, NONE, NONE), new Unify(NO_TYPE, NONE, NONE), new Unify(NO_TYPE, NONE, NONE),
+                    new Unify(NO_TYPE, NONE, NONE) },
+            { new Unify(NO_TYPE, NONE, NONE), new Unify(NO_TYPE, NONE, NONE), new Unify(NO_TYPE, NONE, NONE),
+                    new Unify(BOOL_TYPE, NONE, NONE) }
     };
 
-    public EZType unifyComp(EZType that) {
+    public Unify unifyComp(EZType that) {
         return comp[this.ordinal()][that.ordinal()];
     }
 }

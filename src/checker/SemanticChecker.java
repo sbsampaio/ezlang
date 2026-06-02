@@ -7,12 +7,13 @@ import java.util.Set;
 
 import org.antlr.v4.runtime.Token;
 
+import ast.AST;
 import parser.*;
 import typing.EZType;
 
 import static typing.EZType.*;
 
-public class SemanticChecker extends EZParserBaseVisitor<EZType> {
+public class SemanticChecker extends EZParserBaseVisitor<AST> {
 
     private static class Entry {
         public String id;
@@ -28,7 +29,6 @@ public class SemanticChecker extends EZParserBaseVisitor<EZType> {
         for (Entry e : symbolsTable.values())
             System.out.printf("Entry %d -- name: %s, line: %d, type: %s\n",
                     i++, e.id, e.line, e.type.toString());
-
     }
 
     private Set<String> strings = new LinkedHashSet<>();
@@ -75,19 +75,19 @@ public class SemanticChecker extends EZParserBaseVisitor<EZType> {
     }
 
     @Override
-    public EZType visitRead_stmt(EZParser.Read_stmtContext ctx) {
+    public AST visitRead_stmt(EZParser.Read_stmtContext ctx) {
         checkVar(ctx.ID().getSymbol());
         return EZType.NO_TYPE;
     }
 
     @Override
-    public EZType visitWrite_stmt(EZParser.Write_stmtContext ctx) {
+    public AST visitWrite_stmt(EZParser.Write_stmtContext ctx) {
         visit(ctx.expr());
         return EZType.NO_TYPE;
     }
 
     @Override
-    public EZType visitAssign_stmt(EZParser.Assign_stmtContext ctx) {
+    public AST visitAssign_stmt(EZParser.Assign_stmtContext ctx) {
         EZType exprType = visit(ctx.expr());
         Token idToken = ctx.ID().getSymbol();
         EZType idType = checkVar(idToken);
@@ -96,26 +96,26 @@ public class SemanticChecker extends EZParserBaseVisitor<EZType> {
     }
 
     @Override
-    public EZType visitIf_stmt(EZParser.If_stmtContext ctx) {
+    public AST visitIf_stmt(EZParser.If_stmtContext ctx) {
         EZType exprType = visit(ctx.expr());
         checkBoolExpr(ctx.IF().getSymbol().getLine(), "if", exprType);
         return NO_TYPE;
     }
 
     @Override
-    public EZType visitRepeat_stmt(EZParser.Repeat_stmtContext ctx) {
+    public AST visitRepeat_stmt(EZParser.Repeat_stmtContext ctx) {
         EZType exprType = visit(ctx.expr());
         checkBoolExpr(ctx.UNTIL().getSymbol().getLine(), "repeat", exprType);
         return NO_TYPE;
     }
 
     @Override
-    public EZType visitExprId(EZParser.ExprIdContext ctx) {
+    public AST visitExprId(EZParser.ExprIdContext ctx) {
         return checkVar(ctx.ID().getSymbol());
     }
 
     @Override
-    public EZType visitVar_decl(EZParser.Var_declContext ctx) {
+    public AST visitVar_decl(EZParser.Var_declContext ctx) {
         String id = ctx.ID().getSymbol().getText();
         int type = ctx.type_spec().start.getType();
         int line = ctx.type_spec().start.getLine();
@@ -136,19 +136,19 @@ public class SemanticChecker extends EZParserBaseVisitor<EZType> {
     }
 
     @Override
-    public EZType visitExprStrVal(EZParser.ExprStrValContext ctx) {
+    public AST visitExprStrVal(EZParser.ExprStrValContext ctx) {
         String strVal = ctx.STR_VAL().getText();
         strings.add(strVal.substring(1, strVal.length() - 1));
         return STR_TYPE;
     }
 
     @Override
-    public EZType visitExprRealVal(EZParser.ExprRealValContext ctx) {
+    public AST visitExprRealVal(EZParser.ExprRealValContext ctx) {
         return REAL_TYPE;
     }
 
     @Override
-    public EZType visitTimesOver(EZParser.TimesOverContext ctx) {
+    public AST visitTimesOver(EZParser.TimesOverContext ctx) {
         EZType left = visit(ctx.expr(0));
         EZType right = visit(ctx.expr(1));
 
@@ -163,7 +163,7 @@ public class SemanticChecker extends EZParserBaseVisitor<EZType> {
     }
 
     @Override
-    public EZType visitPlusMinus(EZParser.PlusMinusContext ctx) {
+    public AST visitPlusMinus(EZParser.PlusMinusContext ctx) {
         EZType left = visit(ctx.expr(0));
         EZType right = visit(ctx.expr(1));
 
@@ -186,22 +186,22 @@ public class SemanticChecker extends EZParserBaseVisitor<EZType> {
     }
 
     @Override
-    public EZType visitExprPar(EZParser.ExprParContext ctx) {
+    public AST visitExprPar(EZParser.ExprParContext ctx) {
         return visit(ctx.expr());
     }
 
     @Override
-    public EZType visitExprFalse(EZParser.ExprFalseContext ctx) {
+    public AST visitExprFalse(EZParser.ExprFalseContext ctx) {
         return BOOL_TYPE;
     }
 
     @Override
-    public EZType visitExprIntVal(EZParser.ExprIntValContext ctx) {
+    public AST visitExprIntVal(EZParser.ExprIntValContext ctx) {
         return INT_TYPE;
     }
 
     @Override
-    public EZType visitEqLt(EZParser.EqLtContext ctx) {
+    public AST visitEqLt(EZParser.EqLtContext ctx) {
         EZType left = visit(ctx.expr(0));
         EZType right = visit(ctx.expr(1));
 
@@ -217,7 +217,7 @@ public class SemanticChecker extends EZParserBaseVisitor<EZType> {
     }
 
     @Override
-    public EZType visitExprTrue(EZParser.ExprTrueContext ctx) {
+    public AST visitExprTrue(EZParser.ExprTrueContext ctx) {
         return BOOL_TYPE;
     }
 }

@@ -15,9 +15,8 @@ public class App {
         EZParser parser = new EZParser(tokens);
         ParseTree tree = parser.program();
 
-        if (parser.getNumberOfSyntaxErrors() != 0) {
+        if (parser.getNumberOfSyntaxErrors() != 0)
             return;
-        }
 
         SemanticChecker sc = new SemanticChecker();
         sc.visit(tree);
